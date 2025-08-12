@@ -7,7 +7,7 @@ if __name__ == "__main__":
     requests.Session()
 
     payload = {
-        "email": "",
+        "email": "liupingcnjs@qq.com",
         "password": "",
     }
 
@@ -18,6 +18,7 @@ if __name__ == "__main__":
     )
 
     login_data = res.json()
+    user_id = login_data["userid"]
 
     payload = {"user_config_ts": 0, "diaries_ts": 0, "remark_ts": 0, "images_ts": 0}
     headers = {"auth": "token " + login_data["token"]}
@@ -25,4 +26,18 @@ if __name__ == "__main__":
         url=BASE_URL + "v2/sync/", data=payload, headers=headers,timeout=None
     )
 
-    print(res.json())
+    diaries = res.json()["diaries"]
+    for diary in diaries:
+        id = diary["id"]
+        payload = {"diary_ids": id}
+        res = requests.post(
+            url=BASE_URL + "diary/all_by_ids/" + str(user_id) + "/", data=payload, headers=headers, timeout=10
+        )
+        diaries = res.json().get("diaries", [])
+        if diaries:
+            diary = diaries[0]
+            with open(f"./.data/" + str(diary["createdtime"]) + ".txt", "w", encoding="utf-8") as f:
+                f.write(diary["content"])
+                print(f"Saved diary ID: {id}")
+        else:
+            print(f"No diary found for ID: {id}")
