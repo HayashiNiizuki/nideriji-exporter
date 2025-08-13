@@ -5,14 +5,14 @@ import json
 BASE_URL = "https://nideriji.cn/api/"
 EMAIL = "liupingcnjs@qq.com"
 TOKEN = None
+USER_ID = None
 
-if __name__ == "__main__":
-    requests.Session()
 
+def login():
+    global TOKEN, USER_ID
     if os.path.exists(".auth"):
         with open(".auth", "r") as f:
             login_data = json.load(f)
-            TOKEN = login_data["token"]
     else:
         payload = {
             "email": EMAIL,
@@ -29,12 +29,15 @@ if __name__ == "__main__":
         with open(".auth", "w") as f:
             json.dump(login_data, f)
 
-        TOKEN = login_data["token"]
+    TOKEN = login_data["token"]
+    USER_ID = login_data["userid"]
 
-    user_id = login_data["userid"]
+
+def save_diaries():
+    os.makedirs("./.data/", exist_ok=True)
 
     payload = {"user_config_ts": 0, "diaries_ts": 0, "remark_ts": 0, "images_ts": 0}
-    headers = {"auth": "token " + login_data["token"]}
+    headers = {"auth": "token " + TOKEN}
     res = requests.post(
         url=BASE_URL + "v2/sync/", data=payload, headers=headers, timeout=None
     )
@@ -44,7 +47,7 @@ if __name__ == "__main__":
         id = diary["id"]
         payload = {"diary_ids": id}
         res = requests.post(
-            url=BASE_URL + "diary/all_by_ids/" + str(user_id) + "/",
+            url=BASE_URL + "diary/all_by_ids/" + str(USER_ID) + "/",
             data=payload,
             headers=headers,
             timeout=10,
@@ -59,3 +62,10 @@ if __name__ == "__main__":
                 print(f"Saved diary ID: {id}")
         else:
             print(f"No diary found for ID: {id}")
+
+
+if __name__ == "__main__":
+    requests.Session()
+
+    login()
+    save_diaries()
