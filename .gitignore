@@ -207,3 +207,6 @@ __marimo__/
 
 # diary data
 .data/
+
+# pyinstaller spec
+!main.spec
