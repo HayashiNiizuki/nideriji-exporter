@@ -201,3 +201,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local auth file
+.auth
+
+# diary data
+.data/
