@@ -15,9 +15,13 @@ USER_ID = None
 def login():
     global TOKEN, USER_ID
     if os.path.exists(".auth"):
-        with open(".auth", "r") as f:
-            login_data = json.load(f)
-        LOG.info("Loaded existing authentication data.")
+        try:
+            with open(".auth", "r") as f:
+                login_data = json.load(f)
+            LOG.info("Loaded existing authentication data.")
+        except Exception as e:
+            LOG.error("Loaded existing authentication data fail, please rerun script.")
+            os.unlink(".auth")
     else:
         payload = {
             "email": input("Email: "),
