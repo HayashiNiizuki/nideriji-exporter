@@ -10,10 +10,12 @@ BASE_URL = "https://nideriji.cn/api/"
 EMAIL = None
 TOKEN = None
 USER_ID = None
+IMAGE_COUNT = 0
+DIARY_COUNT = 0
 
 
 def login():
-    global TOKEN, USER_ID
+    global TOKEN, USER_ID, IMAGE_COUNT, DIARY_COUNT
     if os.path.exists(".auth"):
         try:
             with open(".auth", "r") as f:
@@ -41,6 +43,8 @@ def login():
 
     TOKEN = login_data["token"]
     USER_ID = login_data["userid"]
+    IMAGE_COUNT = login_data["user_config"]["image_count"]
+    DIARY_COUNT = login_data["user_config"]["diary_count"]
 
 
 def save_diaries():
@@ -83,6 +87,30 @@ def save_diaries():
             continue
 
 
+def save_images():
+    os.makedirs("./.data/", exist_ok=True)
+    os.makedirs("./.data/images/", exist_ok=True)
+    headers = {"auth": "token " + TOKEN}
+
+    for i in range(IMAGE_COUNT):
+        try:
+            res = requests.get(
+                url="https://f.nideriji.cn/api/image/" + str(USER_ID) + "/" + str(i) + "/",
+                headers=headers,
+                timeout=10,
+            )
+
+            if res.text != '':
+                with open(f"./.data/images/{i}.jpg", "wb") as f:
+                    f.write(res.content)
+                LOG.info(f"Saved image ID: {i}")
+            else:
+                LOG.info(f"Image ID {i} not found (status code: {res.status_code})")
+        except Exception as e:
+            LOG.error(f"Error saving image ID {i}: {e}")
+            continue
+
+
 if __name__ == "__main__":
     requests.Session()
 
@@ -91,3 +119,6 @@ if __name__ == "__main__":
 
     if args.save_diaries:
         save_diaries()
+
+    if args.save_images:
+        save_images()
