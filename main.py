@@ -1,3 +1,4 @@
+import getpass
 import requests
 import os
 import json
@@ -27,7 +28,7 @@ def login():
     else:
         payload = {
             "email": input("Email: "),
-            "password": input("Password: "),
+            "password": getpass.getpass("Passward: "),
         }
 
         res = requests.post(
@@ -101,7 +102,7 @@ def save_images():
             )
 
             if res.text != '':
-                with open(f"./.data/images/{i}.jpg", "wb") as f:
+                with open(f"./.data/images/outlook-{i}.jpg", "wb") as f:
                     f.write(res.content)
                 LOG.info(f"Saved image ID: {i}")
             else:
