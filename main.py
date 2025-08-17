@@ -95,12 +95,12 @@ def save_images():
     for i in range(IMAGE_COUNT):
         try:
             res = requests.get(
-                url="https://f.nideriji.cn/api/image/" + str(USER_ID) + "/" + str(i) + "/",
+                url=f"https://f.nideriji.cn/api/image/{USER_ID}/{i}/",
                 headers=headers,
                 timeout=10,
             )
 
-            if res.text != '':
+            if res.text != "":
                 with open(f"./.data/images/{i}.jpg", "wb") as f:
                     f.write(res.content)
                 LOG.info(f"Saved image ID: {i}")
