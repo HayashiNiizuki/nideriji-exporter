@@ -5,13 +5,7 @@ from datetime import datetime
 
 from args import args
 from log import LOG
-
-BASE_URL = "https://nideriji.cn/api/"
-EMAIL = None
-TOKEN = None
-USER_ID = None
-IMAGE_COUNT = 0
-DIARY_COUNT = 0
+from consts import *
 
 
 def login():

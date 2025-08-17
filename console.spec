@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['main.py'],
+    ['console.py'],
     pathex=[],
     binaries=[],
     datas=[],
