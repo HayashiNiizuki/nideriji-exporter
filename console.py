@@ -55,6 +55,13 @@ def save_diaries():
         try:
             _id = diary["id"]
             payload = {"diary_ids": _id}
+            title = diary["title"]
+            dt_str = datetime.fromtimestamp(diary["createdtime"]).strftime(
+                "%Y-%m-%d"
+            )
+            to_save_filename = f"{dt_str}-{_id}-{title}.txt"
+            if to_save_filename in os.listdir(".data"):
+                continue
             res = requests.post(
                 url=BASE_URL + "diary/all_by_ids/" + str(USER_ID) + "/",
                 data=payload,
@@ -64,12 +71,8 @@ def save_diaries():
             diaries = res.json().get("diaries", [])
             if diaries:
                 diary = diaries[0]
-                dt_str = datetime.fromtimestamp(diary["createdtime"]).strftime(
-                    "%Y-%m-%d"
-                )
-                title = diary["title"]
                 with open(
-                    f"./.data/{dt_str}-{_id}-{title}.txt", "w", encoding="utf-8"
+                    f"./.data/{to_save_filename}", "w", encoding="utf-8"
                 ) as f:
                     f.write(diary["title"] + "\n\n")
                     f.write(diary["content"])
