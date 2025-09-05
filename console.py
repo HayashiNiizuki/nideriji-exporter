@@ -1,3 +1,4 @@
+import getpass
 import requests
 import os
 import json
@@ -21,7 +22,7 @@ def login():
     else:
         payload = {
             "email": input("Email: "),
-            "password": input("Password: "),
+            "password": getpass.getpass("Passward: "),
         }
 
         res = requests.post(
